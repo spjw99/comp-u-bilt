@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Link} from 'react-router-dom';
+//import {Link} from 'react-router-dom';
 import API from '../utils/API';
 
 class Search extends Component {
@@ -29,7 +29,7 @@ class Search extends Component {
     this.getHddsByTags('all');
     this.getGpusByTags('all');
     this.getCasesByTags('all');
-    this.state.currentStep = "1";
+    this.setState({currentStep: "1"});
   }
   getCpusByTags = (tagId) => {
     API.getCpusByTags(tagId)
@@ -109,20 +109,10 @@ class Search extends Component {
 //       .catch(err => console.log(err));
 //   }
 step1Submit = cpu => {
-  console.log(this.state.buildParts);
   this.state.buildParts.push(cpu);
   this.setState({cpus: []});
   this.setState({currentStep: "2"});
   this.setState({totalPrice: parseFloat(this.state.totalPrice) + parseFloat(cpu.price)});
-  console.log(this.state.buildParts);
-  // if (!this.state.searchTerm) {
-  //   return false;
-  // }
-
-  // API
-  //   .getComputersByPrice(this.state.searchTerm)
-  //   .then(({data}) => this.setState({computers: data}))
-  //   .catch(err => console.log(err));
 }
 step2Submit = ram => {this.state.buildParts.push(ram);this.setState({rams: []});this.setState({currentStep: "3"});this.setState({totalPrice: parseFloat(this.state.totalPrice) + parseFloat(ram.price)});}
 step3Submit = hdd => {this.state.buildParts.push(hdd);this.setState({hdds: []});this.setState({currentStep: "4"});this.setState({totalPrice: parseFloat(this.state.totalPrice) + parseFloat(hdd.price)});}
@@ -163,7 +153,6 @@ addToCart = () => {
                   this.state.buildParts.map(buildPart => {
                     return (
                       <div className="d-flex pb-3 col-12 col-md-2" key={buildPart._id}>
-                        <h2>{}</h2>
                         <div className="card">
                           <h5 className="card-header">{buildPart.title}</h5>
                           <img src={buildPart.image} alt={buildPart.title} className="card-img"/>
@@ -172,7 +161,7 @@ addToCart = () => {
                             {/* <p>{buildPart.description}</p> */}
                             <div className="btn-group d-flex flex-row-reverse" role="group">
                               {/* <button type="button" className="btn btn-warning m-2" onClick={() => this.step1Submit(buildPart)}>Select</button> */}
-                              <a className="btn btn-primary m-2" href={buildPart.link} target="_blank">More Info</a>
+                              <a className="btn btn-primary m-2" href={buildPart.link} target="_blank" rel="noopener noreferrer">More Info</a>
                             </div>
                             
                           </div>
@@ -204,7 +193,7 @@ addToCart = () => {
                               <p>{cpu.description}</p>
                               <div className="btn-group d-flex flex-row-reverse" role="group">
                                 <button type="button" className="btn btn-warning m-2" onClick={() => this.step1Submit(cpu)}>Select</button>
-                                <a className="btn btn-primary m-2" href={cpu.link} target="_blank">More Info</a>
+                                <a className="btn btn-primary m-2" href={cpu.link} target="_blank" rel="noopener noreferrer">More Info</a>
                               </div>
                               
                             </div>
@@ -237,7 +226,7 @@ addToCart = () => {
                               <p>{ram.description}</p>
                               <div className="btn-group d-flex flex-row-reverse" role="group">
                                 <button type="button" className="btn btn-warning m-2" onClick={() => this.step2Submit(ram)}>Select</button>
-                                <a className="btn btn-primary m-2" href={ram.link} target="_blank">More Info</a>
+                                <a className="btn btn-primary m-2" href={ram.link} target="_blank" rel="noopener noreferrer">More Info</a>
                               </div>
                               
                             </div>
@@ -270,7 +259,7 @@ addToCart = () => {
                               <p>{hdd.description}</p>
                               <div className="btn-group d-flex flex-row-reverse" role="group">
                                 <button type="button" className="btn btn-warning m-2" onClick={() => this.step3Submit(hdd)}>Select</button>
-                                <a className="btn btn-primary m-2" href={hdd.link} target="_blank">More Info</a>
+                                <a className="btn btn-primary m-2" href={hdd.link} target="_blank" rel="noopener noreferrer">More Info</a>
                               </div>
                               
                             </div>
@@ -303,7 +292,7 @@ addToCart = () => {
                               <p>{gpu.description}</p>
                               <div className="btn-group d-flex flex-row-reverse" role="group">
                                 <button type="button" className="btn btn-warning m-2" onClick={() => this.step4Submit(gpu)}>Select</button>
-                                <a className="btn btn-primary m-2" href={gpu.link} target="_blank">More Info</a>
+                                <a className="btn btn-primary m-2" href={gpu.link} target="_blank" rel="noopener noreferrer">More Info</a>
                               </div>
                               
                             </div>
@@ -336,7 +325,7 @@ addToCart = () => {
                               <p>{dcase.description}</p>
                               <div className="btn-group d-flex flex-row-reverse" role="group">
                                 <button type="button" className="btn btn-warning m-2" onClick={() => this.step5Submit(dcase)}>Select</button>
-                                <a className="btn btn-primary m-2" href={dcase.link} target="_blank">More Info</a>
+                                <a className="btn btn-primary m-2" href={dcase.link} target="_blank" rel="noopener noreferrer">More Info</a>
                               </div>
                               
                             </div>

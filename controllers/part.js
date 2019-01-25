@@ -18,7 +18,7 @@ module.exports = {
   findCpusByTagId: function(req, res) {
     let condition = {category: '1'};
     if(req.params.tagId !== 'all'){
-        condition['tags'] = req.params.tagId;
+        condition['idx'] = req.params.tagId;
     }
     db.Part
       .find(condition)
@@ -31,7 +31,7 @@ module.exports = {
   findRamsByTagId: function(req, res) {
     let condition = {category: '2'};
     if(req.params.tagId !== 'all'){
-        condition['tags'] = req.params.tagId;
+        condition['idx'] = req.params.tagId;
     }
     db.Part
       .find(condition)
@@ -42,9 +42,9 @@ module.exports = {
       });
   },
   findHddsByTagId: function(req, res) {
-    let condition = {category: '3'};
+    let condition = {category: '4'};
     if(req.params.tagId !== 'all'){
-        condition['tags'] = req.params.tagId;
+        condition['idx'] = req.params.tagId;
     }
     db.Part
       .find(condition)
@@ -55,7 +55,7 @@ module.exports = {
       });
   },
   findGpusByTagId: function(req, res) {
-    let condition = {category: '4'};
+    let condition = {category: '3'};
     if(req.params.tagId !== 'all'){
         condition['tags'] = req.params.tagId;
     }

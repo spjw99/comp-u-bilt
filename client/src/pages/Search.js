@@ -1,10 +1,14 @@
 import React, {Component} from 'react';
 import SearchForm from '../components/SearchForm';
-import {Link} from 'react-router-dom';
+import Modal from '../components/Modal';
+//import {Link} from 'react-router-dom';
 import API from '../utils/API';
 
 class Search extends Component {
+  
   state = {
+    show: false,
+    modal: [],
     searchTerm: "",
     computers: []
   }
@@ -18,66 +22,86 @@ class Search extends Component {
     const newcomputer = [
       {
         title: "SCOUT",
-        description: "",
         price: "737.95",
         cpu: "4",
+        cpu_desc: "Intel Core i5-8400",
         ram: "13",
+        ram_desc: "Ballistix Sport LT 8GB",
         hdd: "24",
+        hdd_desc: "WD Blue 3D NAND 250GB",
         gpu: "18",
+        gpu_desc: "MSI GeForce RTX 2060",
         case: "27",
-        tag: "",
+        case_desc: "NZXT H500",
+        tag: "feature",
         link: "",
         image: "image/pc-1.png"
       },
       {
         title: "PRIVATE",
-        description: "",
         price: "1038.95",
         cpu: "3",
+        cpu_desc: "Intel Core i5-8600K",
         ram: "13",
+        ram_desc: "Ballistix Sport LT 8GB",
         hdd: "21",
+        hdd_desc: "SAMSUNG 860 EVO Series 2.5\" 500GB",
         gpu: "20",
+        gpu_desc: "PowerColor Radeon RX VEGA 64",
         case: "30",
-        tag: "",
+        case_desc: "LIAN LI PC-O11",
+        tag: "feature",
         link: "",
         image: "image/pc-2.png"
       },
       {
         title: "COLONEL",
-        description: "",
         price: "1339.95",
         cpu: "8",
+        cpu_desc: "AMD RYZEN 7 2700",
         ram: "14",
+        ram_desc: "G.SKILL TridentZ RGB Series 16GB",
         hdd: "25",
+        hdd_desc: "WD Black NVMe M.2 2280 500GB",
         gpu: "19",
+        gpu_desc: "ASUS ROG GeForce RTX 2070",
         case: "26",
-        tag: "",
+        case_desc: "Cooler Master MasterCase H500M",
+        tag: "feature",
         link: "",
         image: "image/pc-3.png"
       },
       {
         title: "CAPTAIN",
-        description: "",
         price: "1645.95",
         cpu: "5",
+        cpu_desc: "Intel Core i7-9700K",
         ram: "14",
+        ram_desc: "G.SKILL TridentZ RGB Series 16GB",
         hdd: "22",
+        hdd_desc: "WD Black NVMe M.2 2280 1TB",
         gpu: "17",
+        gpu_desc: "GIGABYTE GeForce RTX 2080",
         case: "30",
-        tag: "",
+        case_desc: "LIAN LI PC-O11",
+        tag: "feature",
         link: "",
         image: "image/pc-4.png"
       },
       {
         title: "COMMANDER",
-        description: "",
         price: "2496.95",
         cpu: "10",
+        cpu_desc: "AMD 1st Gen RYZEN Threadripper 1950X",
         ram: "15",
+        ram_desc: "G.SKILL TridentZ RGB Series 32GB",
         hdd: "22",
+        hdd_desc: "WD Black NVMe M.2 2280 1TB",
         gpu: "16",
+        gpu_desc: "EVGA GeForce RTX 2080 Ti",
         case: "26",
-        tag: "",
+        case_desc: "Cooler Master MasterCase H500M",
+        tag: "feature",
         link: "",
         image: "image/pc-5.png"
       }
@@ -95,7 +119,7 @@ class Search extends Component {
         description: "Intel Core i9-9900K Coffee Lake 8-Core, 16-Thread, 3.6 GHz (5.0 GHz Turbo) LGA 1151 (300 Series) 95W BX80684I99900K Desktop Processor Intel UHD Graphics 630",
         price: "529.99",
         category: "1",
-        tags: "Intel Core i5, intel, i9, cpu",
+        tags: "Intel Core i9, intel, i9, cpu",
         link: "https://www.newegg.com/Product/Product.aspx?Item=N82E16819117957&Description=Intel%20Core%20i9-9900K&cm_re=Intel_Core_i9-9900K-_-19-117-957-_-Product",
         image: "https://c1.neweggimages.com/NeweggImage/ProductImageCompressAll1280/19-117-957-V01.jpg"
       },
@@ -428,7 +452,43 @@ class Search extends Component {
       .then(({data}) => console.log(data))
       .catch(err => console.log(err));
   }
+  moreInfo = (partType, partId) => {
+    if(partType === "cpu"){
+      API
+        .getCpusByTags(partId)
+        .then(({data}) => {
+          this.setState({modal: data});
+          this.showModal();
+        })
+        .catch(err => console.log(err));
+    }else if(partType === "ram"){
+      API
+      .getRamsByTags(partId)
+      .then(({data}) => {
+        this.setState({modal: data});
+        this.showModal();
+      })
+      .catch(err => console.log(err));
+    }else if(partType === "hdd"){
+      API
+      .getHddsByTags(partId)
+      .then(({data}) => {
+        this.setState({modal: data});
+        this.showModal();
+      })
+      .catch(err => console.log(err));
+    }
+  }
+  showModal = () => {
+    this.setState({ show: true });
+  };
+
+  hideModal = () => {
+    this.setState({ show: false });
+  };
   render() {
+    const cursorStyle = {cursor : 'pointer'};
+    const cpuLogo = {width : '50px', position: 'relative', top: '-12px'};
     return (
       <div>
         <div className="jumbotron jumbotron-fluid text-center">
@@ -454,16 +514,51 @@ class Search extends Component {
                   : 
                   this.state.computers.map(computer => {
                     return (
-                      <div className="col-12 col-md-3 col-sm-5" key={computer._id}>
+                      <div className="col-12 col-md-4 col-sm-6" key={computer._id}>
                         <div className="card">
                           <h5 className="card-header">{computer.title}</h5>
                           <img src={computer.image} alt={computer.title} className="card-img"/>
                           <div className="card-body">
-                            <h6 className="card-subtitle">${computer.price}</h6>
-                            <p>{computer.description}</p>
-                            <div className="btn-group d-flex flex-row-reverse" role="group">
+                            <div className="d-flex justify-content-between">
+                              <div className="">
+                                <h4 className="card-subtitle">${computer.price}</h4>
+                              </div>
+                              <div className="">
+                                {
+                                  computer.cpu_desc.includes("i5-8") ? 
+                                  (<img src="image/i5_8.jpg" alt="" style={cpuLogo}/>)
+                                  :
+                                  computer.cpu_desc.includes("i7-8") ? 
+                                  (<img src="image/i7_8.jpg" alt="" style={cpuLogo}/>)
+                                  :
+                                  computer.cpu_desc.includes("i7-9") ? 
+                                  (<img src="image/i7_9.jpg" alt="" style={cpuLogo}/>)
+                                  :
+                                  computer.cpu_desc.includes("i9-9") ? 
+                                  (<img src="image/i9_9.jpg" alt="" style={cpuLogo}/>)
+                                  :
+                                  computer.cpu_desc.includes("RYZEN 3") ? 
+                                  (<img src="image/a3.jpg" alt="" style={cpuLogo}/>)
+                                  :
+                                  computer.cpu_desc.includes("RYZEN 5") ? 
+                                  (<img src="image/a5.jpg" alt="" style={cpuLogo}/>)
+                                  :
+                                  computer.cpu_desc.includes("RYZEN 7") ? 
+                                  (<img src="image/a7.jpg" alt="" style={cpuLogo}/>)
+                                  :
+                                  computer.cpu_desc.includes("Threadripper") ? 
+                                  (<img src="image/at.jpg" alt="" style={cpuLogo}/>)
+                                  :
+                                  null
+                                }
+                              </div>
+                            </div>
+                            <div className="float-none"></div>
+                            <div className="btn-group d-flex flex-column mt-3 " role="group">
+                              <p style={cursorStyle} onClick={() => this.moreInfo("cpu", computer.cpu)}><i className="fas fa-microchip"></i> {computer.cpu_desc}</p>
+                              <p style={cursorStyle} onClick={() => this.moreInfo("ram", computer.ram)}><i className="fas fa-memory"></i> {computer.ram_desc}</p>
+                              <p style={cursorStyle} onClick={() => this.moreInfo("hdd", computer.hdd)}><i className="fas fa-hdd"></i> {computer.hdd_desc}</p>
                               <button type="button" className="btn btn-warning m-2" onClick={() => this.addToCart(computer._id)}>Add to Cart</button>
-                              <a className="btn btn-primary m-2" href={computer.link}>More Info</a>
                             </div>
                           </div>
                         </div>
@@ -475,7 +570,15 @@ class Search extends Component {
             </div>
           </div>
         </div>
-
+        {/* <Modal
+          value={this.state.modal}
+        /> */}
+        <Modal 
+          show = {this.state.show}
+          handleClose = {this.hideModal}
+          value = {this.state.modal}
+          />
+        
       </div>
     )
   }
