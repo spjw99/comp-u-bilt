@@ -50,6 +50,7 @@ module.exports = {
   sendSMS: function (req, res) {
     console.log("SMS sending...");
     text.sendText("917-929-5945", "Textbelt says hello");
+    res.json("SMS SENT");
   }
 
   // // create / insert new book ("/api/book" => POST)
