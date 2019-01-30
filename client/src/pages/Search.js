@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import SearchForm from '../components/SearchForm';
 import Modal from '../components/Modal';
-//import {Link} from 'react-router-dom';
+import {Link, Redirect} from 'react-router-dom';
 import API from '../utils/API';
 
 class Search extends Component {
@@ -10,14 +10,15 @@ class Search extends Component {
     show: false,
     modal: [],
     searchTerm: "",
-    computers: []
+    computers: [],
+    addedToCart: false
   }
   componentDidMount() {
-    //this.createComputer();
+    this.createComputer();
     //this.createPart();
     this.getComputers();
   }
-
+  
   createComputer = () => {
     const newcomputer = [
       {
@@ -447,9 +448,24 @@ class Search extends Component {
 
   addToCart = computerId => {
     const selectedComputer = this.state.computers.find(({_id}) => _id === computerId);
+    const readyForOrder = {
+      userId: "0",
+      orderId: "",
+      custName: "",
+      custShipAddr: "",
+      custPhone: "",
+      custCard: "",
+      computer: [selectedComputer]
+    };
+    //console.log(readyForOrder);
     API
-      .setUserSavedComputer(selectedComputer)
-      .then(({data}) => console.log(data))
+      .addToCart(readyForOrder)
+      .then(({data}) => {
+        console.log(data);
+        this.setState({
+          addedToCart: true
+        })
+      })
       .catch(err => console.log(err));
   }
   moreInfo = (partType, partId) => {
@@ -487,6 +503,10 @@ class Search extends Component {
     this.setState({ show: false });
   };
   render() {
+    if (this.state.addedToCart) {
+      return <Redirect to="/order" />
+    }
+
     const cursorStyle = {cursor : 'pointer'};
     const cpuLogo = {width : '50px', position: 'relative', top: '-12px'};
     return (

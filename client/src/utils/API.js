@@ -2,10 +2,9 @@
 import axios from 'axios';
 
 export default {
-  /*****************************************
-   * COMPUTER API
-   ***************************/
-  
+/*****************************************
+* COMPUTER API
+***************************/
   /*********************
    * INDEX PAGE
    **********************/
@@ -16,14 +15,14 @@ export default {
   getComputersByPrice: function(price){
     return axios.get(`/api/computer/${price}`)
   },
- 
+
   /**************************
    * USER SAVE PROGRESS PAGE
    ***************************/
 
   // save progress for user id
-  setUserSavedComputer: function(computerData) {
-    return axios.post('/api/computer', computerData)
+  addToCart: function(computerData) {
+    return axios.post('/api/computer/addToCart', computerData)
   },
   // get saved progress by user id
   getUserSavedComputer: function(userId) {
@@ -44,12 +43,9 @@ export default {
   },
 
 
-
-
-
 /*******************************************************************
- * PART API
- *****************************************************/
+* PART API
+*****************************************************/
    /*********************
    * BUILD PAGE
    **********************/
@@ -78,5 +74,16 @@ export default {
    **********************/
   createPart: function(partData){
     return axios.post('/api/part', partData)
+  },
+
+
+/*******************************************************************
+* ORDER API
+*****************************************************/
+  getOrder : function(){
+    return axios.get(`/api/order`)
+  },
+  sendSMS : function(smsData){
+    return axios.post('/api/order/sms', smsData)
   }
 }

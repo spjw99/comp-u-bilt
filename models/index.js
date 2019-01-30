@@ -2,5 +2,6 @@
 module.exports = {
     User: require("./user"),
     Computer: require("./computer"),
-    Part: require("./part")
+    Part: require("./part"),
+    Order: require("./order")
 }

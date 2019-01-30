@@ -8,6 +8,7 @@ import Navbar from './components/Navbar';
 import Search from './pages/Search';
 import Saved from './pages/Saved';
 import Build from './pages/Build';
+import Order from './pages/Order';
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
           <Route exact path="/" component={Search}/>
           <Route exact path="/saved" component={Saved}/>
           <Route exact path="/build" component={Build}/>
+          <Route exact path="/order" component={Order}/>
           <Route
             render={() => <h1 className="text-center">Where are you?
           </h1>}/>

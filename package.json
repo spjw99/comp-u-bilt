@@ -30,6 +30,7 @@
   "dependencies": {
     "express": "^4.16.4",
     "if-env": "^1.0.4",
-    "mongoose": "^5.4.3"
+    "mongoose": "^5.4.3",
+    "textbelt": "0.0.4"
   }
 }

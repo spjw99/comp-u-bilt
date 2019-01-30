@@ -1,61 +1,66 @@
 // import our Book model
 const db = require("../models");
-
+const text = require('textbelt');
 // export a set of methods to edit and manipulate the Book collection
 module.exports = {
   // find all books ("/api/book" => GET)
+  getOrder: function(req, res) {
+    db.Order
+      .find({})
+      .sort({date: -1})
+      .limit(1)
+      .then(dbComputerData => res.json(dbComputerData))
+      .catch(err => {
+        console.log(err);
+        res.json(err);
+      });
+  },
   findAll: function(req, res) {
     // /api/book?title=harry+potter
     // req.query => {title: "harry potter"}
-    db.Computer
+    db.Order
       .find(req.query)
       .sort({_id: -1})
-      .then(dbComputerData => res.json(dbComputerData))
+      .then(dbOrderData => res.json(dbOrderData))
       .catch(err => {
         console.log(err);
         res.json(err);
       });
   },
-  findByPrice: function(req, res) {
-    db.Computer
+  findByUser: function(req, res) {
+    db.Order
       .find({ price: {$lte : req.params.price}})
       .sort({date: -1})
-      .then(dbComputerData => res.json(dbComputerData))
+      .then(dbOrderData => res.json(dbOrderData))
       .catch(err => {
         console.log(err);
         res.json(err);
       });
   },
-  addToCart: function (req, res) {
-    // console.log(req.body);
+  createOrder: function (req, res) {
+    console.log(req.body);
     db.Order
-    .create(req.body)
-    .then(dbComputerData => res.json(dbComputerData))
-    .catch(err => {
-      console.log(err);
-      res.status(422).json(err)
-    });
-  },
-  createComputer: function (req, res) {
-    // console.log(req.body);
-    db.Computer
       .create(req.body)
-      .then(dbComputerData => res.json(dbComputerData))
+      .then(dbOrderData => res.json(dbOrderData))
       .catch(err => {
         console.log(err);
         res.status(422).json(err)
       });
+  },
+  sendSMS: function (req, res) {
+    console.log("SMS sending...");
+    text.sendText("917-929-5945", "Textbelt says hello");
   }
 
   // // create / insert new book ("/api/book" => POST)
   // create: function (req, res) {
-    // db.Computer
-    //   .create(req.body)
-    //   .then(dbComputerData => res.json(dbComputerData))
-    //   .catch(err => {
-    //     console.log(err);
-    //     res.status(422).json(err)
-    //   });
+  //   db.Computer
+  //     .create(req.body)
+  //     .then(dbComputerData => res.json(dbComputerData))
+  //     .catch(err => {
+  //       console.log(err);
+  //       res.status(422).json(err)
+  //     });
   // },
   // // update book information ("/api/book/:id" => PUT)
   // update: function (req, res) {

@@ -1,6 +1,7 @@
-// import express Router and the book controller
+// import express Router and the computer controller
 const router = require("express").Router();
 const computerController = require("../../controllers/computer");
+
 
 // Matches with "/api/computer"
 router
@@ -8,10 +9,16 @@ router
   .get(computerController.findAll)
   .post(computerController.createComputer);
 
+// Matches with "/api/computer/addTocart"  
+router
+  .route("/addToCart")
+  .post(computerController.addToCart);
+
 // Matches with "/api/computer/:id"
 router
 .route("/:price")
 .get(computerController.findByPrice);
+
 
 // Matches with "/api/computer/:id"
 // router

@@ -1,8 +1,8 @@
-// import express Router and the book controller
+// import express Router and the part controller
 const router = require("express").Router();
 const partController = require("../../controllers/part");
 
-// Matches with "/api/computer"
+// Matches with "/api/part"
 router
   .route("/")
   .post(partController.createPart);
