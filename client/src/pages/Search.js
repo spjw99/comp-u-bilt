@@ -14,8 +14,8 @@ class Search extends Component {
     addedToCart: false
   }
   componentDidMount() {
-    this.createComputer();
-    //this.createPart();
+    //this.createComputer();
+    this.createPart();
     this.getComputers();
   }
   
