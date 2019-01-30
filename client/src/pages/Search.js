@@ -15,7 +15,7 @@ class Search extends Component {
   }
   componentDidMount() {
     //this.createComputer();
-    this.createPart();
+    //this.createPart();
     this.getComputers();
   }
   

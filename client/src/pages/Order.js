@@ -20,7 +20,7 @@ class Order extends Component {
   }
   componentDidMount() {
     this.getOrder();
-    //this.sendSMS();
+    this.sendSMS();
   }
   getOrder = () => {
     API.getOrder()
