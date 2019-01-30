@@ -20,6 +20,7 @@ class Order extends Component {
   }
   componentDidMount() {
     this.getOrder();
+    console.log("call sendSMS");
     this.sendSMS();
   }
   getOrder = () => {
@@ -36,6 +37,7 @@ class Order extends Component {
       .catch(err => console.log(err))
   }
   sendSMS = () => {
+    console.log("call sendSMS API");
     API.sendSMS('test')
         .then(({data}) => console.log(data))
         .catch(err => console.log(err));
