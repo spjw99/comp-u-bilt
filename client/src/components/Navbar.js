@@ -18,7 +18,7 @@ const Navbar = props => {
           <NavLink style={nav_link}
             className={`nav-link  ${window.location.pathname === "/build" ? "text-danger" : ""}`} 
             to="/build">
-            Build For Computer
+            Build a Computer
           </NavLink>
         </li>
         <li className="nav-item">
