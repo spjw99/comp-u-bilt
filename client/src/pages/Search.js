@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import SearchForm from '../components/SearchForm';
 import Modal from '../components/Modal';
-import {Link, Redirect} from 'react-router-dom';
+import {Redirect} from 'react-router-dom';
 import API from '../utils/API';
 
 class Search extends Component {
@@ -11,6 +11,7 @@ class Search extends Component {
     modal: [],
     searchTerm: "",
     computers: [],
+    userOrders: [],
     addedToCart: false
   }
   componentDidMount() {
@@ -420,8 +421,18 @@ class Search extends Component {
        .catch(err => console.log(err));
   }
   getComputers = () => {
+    //COMPUTERS FROM PRE-BUILT
     API.getComputers()
-      .then(({data}) => this.setState({computers: data}))
+      .then(({data}) => {
+        this.setState({computers: data})
+      })
+      .catch(err => console.log(err));
+    //COMPUTERS FROM USER PURCHASE
+    API.getUserOrders()
+      .then(({data}) => {
+        
+        this.setState({userOrders: data})
+      })
       .catch(err => console.log(err));
   }
   
@@ -473,6 +484,7 @@ class Search extends Component {
       API
         .getCpusByTags(partId)
         .then(({data}) => {
+          console.log(data);
           this.setState({modal: data});
           this.showModal();
         })
@@ -509,12 +521,13 @@ class Search extends Component {
 
     const cursorStyle = {cursor : 'pointer'};
     const cpuLogo = {width : '50px', position: 'relative', top: '-12px'};
+    const bodyWidth = {'width': '80%'};
     return (
       <div>
         <div className="jumbotron jumbotron-fluid text-center">
           <h1 className="display-4">Welcome to COMP-U-BILT!</h1>
         </div>
-        <div className="container-fluid">
+        <div className="container-fluid" style={bodyWidth}>
           <div className="row">
             <div className="col-12 col-md-3">
               <h3>What is your budget?</h3>
@@ -587,6 +600,70 @@ class Search extends Component {
                   })
                 }
               </div>
+
+
+              <h2 className="mt-5">Recently Bought</h2>
+              <hr></hr>
+              <div className="row align-items-stretch">
+                {!this.state.userOrders.length ? 
+                  (<h2></h2>) 
+                  : 
+                  this.state.userOrders.map(userOrder => {
+                    return (
+                      <div className="col-12 col-md-4 col-sm-6" key={userOrder._id}>
+                        <div className="card">
+                          <h5 className="card-header">{userOrder.computer[0].title} <i className="mark float-right">by {userOrder.custName}</i></h5>
+                          <img src={userOrder.computer[0].image} alt={userOrder.computer[0].title} className="card-img"/>
+                          <div className="card-body">
+                            <div className="d-flex justify-content-between">
+                              <div className="">
+                                <h4 className="card-subtitle">${userOrder.computer[0].price}</h4>
+                              </div>
+                              <div className="">
+                                {
+                                  userOrder.computer[0].cpu_desc.includes("i5-8") ? 
+                                  (<img src="image/i5_8.jpg" alt="" style={cpuLogo}/>)
+                                  :
+                                  userOrder.computer[0].cpu_desc.includes("i7-8") ? 
+                                  (<img src="image/i7_8.jpg" alt="" style={cpuLogo}/>)
+                                  :
+                                  userOrder.computer[0].cpu_desc.includes("i7-9") ? 
+                                  (<img src="image/i7_9.jpg" alt="" style={cpuLogo}/>)
+                                  :
+                                  userOrder.computer[0].cpu_desc.includes("i9-9") ? 
+                                  (<img src="image/i9_9.jpg" alt="" style={cpuLogo}/>)
+                                  :
+                                  userOrder.computer[0].cpu_desc.includes("RYZEN 3") ? 
+                                  (<img src="image/a3.jpg" alt="" style={cpuLogo}/>)
+                                  :
+                                  userOrder.computer[0].cpu_desc.includes("RYZEN 5") ? 
+                                  (<img src="image/a5.jpg" alt="" style={cpuLogo}/>)
+                                  :
+                                  userOrder.computer[0].cpu_desc.includes("RYZEN 7") ? 
+                                  (<img src="image/a7.jpg" alt="" style={cpuLogo}/>)
+                                  :
+                                  userOrder.computer[0].cpu_desc.includes("Threadripper") ? 
+                                  (<img src="image/at.jpg" alt="" style={cpuLogo}/>)
+                                  :
+                                  null
+                                }
+                              </div>
+                            </div>
+                            <div className="float-none"></div>
+                            <div className="btn-group d-flex flex-column mt-3 " role="group">
+                              <p style={cursorStyle} onClick={() => this.moreInfo("cpu", userOrder.computer[0].cpu)}><i className="fas fa-microchip"></i> {userOrder.computer[0].cpu_desc}</p>
+                              <p style={cursorStyle} onClick={() => this.moreInfo("ram", userOrder.computer[0].ram)}><i className="fas fa-memory"></i> {userOrder.computer[0].ram_desc}</p>
+                              <p style={cursorStyle} onClick={() => this.moreInfo("hdd", userOrder.computer[0].hdd)}><i className="fas fa-hdd"></i> {userOrder.computer[0].hdd_desc}</p>
+                              
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )
+                  })
+                }
+              </div>
+
             </div>
           </div>
         </div>

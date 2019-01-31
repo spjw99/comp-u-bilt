@@ -83,7 +83,13 @@ export default {
   getOrder : function(){
     return axios.get(`/api/order`)
   },
-  sendSMS : function(smsData){
-    return axios.post('/api/order/sms', smsData)
-  }
+  getUserOrders: function(){
+    return axios.get('/api/order/getUserOrders')
+  },
+  placeOrder : function(orderData){
+    return axios.post('api/order/placeOrder', orderData)
+  },
+//   sendSMS : function(smsData){
+//     return axios.post('/api/order/sms', smsData)
+//   }
 }

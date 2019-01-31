@@ -6,7 +6,11 @@ router
     .route("/")
     .get(orderController.getOrder);
 router
-    .route("/sms")
-    .post(orderController.sendSMS); 
+    .route("/getUserOrders")
+    .get(orderController.getUserOrders); 
+router
+    .route("/placeOrder")
+    .post(orderController.placeOrder); 
+
 
 module.exports = router;

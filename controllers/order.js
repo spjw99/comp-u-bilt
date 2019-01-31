@@ -1,6 +1,6 @@
 // import our Book model
 const db = require("../models");
-const text = require('textbelt');
+const request = require('request');
 // export a set of methods to edit and manipulate the Book collection
 module.exports = {
   // find all books ("/api/book" => GET)
@@ -9,7 +9,17 @@ module.exports = {
       .find({})
       .sort({date: -1})
       .limit(1)
-      .then(dbComputerData => res.json(dbComputerData))
+      .then(dbOrderData => res.json(dbOrderData))
+      .catch(err => {
+        console.log(err);
+        res.json(err);
+      });
+  },
+  getUserOrders: function(req, res) {
+    db.Order
+      .find({purchasedFlag : '1'})
+      .sort({date: -1})
+      .then(dbOrderData => res.json(dbOrderData))
       .catch(err => {
         console.log(err);
         res.json(err);
@@ -38,7 +48,7 @@ module.exports = {
       });
   },
   createOrder: function (req, res) {
-    console.log(req.body);
+    //console.log(req.body);
     db.Order
       .create(req.body)
       .then(dbOrderData => res.json(dbOrderData))
@@ -47,54 +57,45 @@ module.exports = {
         res.status(422).json(err)
       });
   },
-  sendSMS: function (req, res) {
-    console.log("SMS sending...");
-    text.sendText("917-929-5945", "Textbelt says hello");
-    res.json("SMS SENT");
+  placeOrder: function(req, res) {
+    req.body[0].purchasedFlag = '1';
+    
+    db.Order
+    .findOneAndUpdate({ _id: req.body[0]._id }, req.body[0])
+    .then(dbOrderData => {
+      // console.log(req.body[0].custPhone);
+      // console.log(dbOrderData.computer[0].price);
+      request.post('https://textbelt.com/text', {
+        form: {
+          phone: `${req.body[0].custPhone}`,
+          message: `
+          [COMP-U-BUILT]
+
+          Your Order Summary
+          =====================
+          Order ID: ${dbOrderData._id}
+
+          Total Price: $${dbOrderData.computer[0].price}
+          =====================
+          
+          Your package will be shipped within 24hours.
+
+          Thank you for choosing COMP-U-BUILT.
+          `,
+          key: 'e1249958a243d3a6d5decfe09a0b471ebd14a94eJXoOn3AQY9nsYLb3pGY5Y33hS'
+        },
+      }, function(err, httpResponse, body) {
+        if (err) {
+          console.error('Error:', err);
+          return;
+        }
+        console.log(JSON.parse(body));
+      })
+      res.json(dbOrderData)
+    })
+    .catch(err => {
+      console.log(err);
+      res.status(422).json(err)
+    });
   }
-
-  // // create / insert new book ("/api/book" => POST)
-  // create: function (req, res) {
-  //   db.Computer
-  //     .create(req.body)
-  //     .then(dbComputerData => res.json(dbComputerData))
-  //     .catch(err => {
-  //       console.log(err);
-  //       res.status(422).json(err)
-  //     });
-  // },
-  // // update book information ("/api/book/:id" => PUT)
-  // update: function (req, res) {
-  //   db.Computer
-  //     .findOneAndUpdate({ _id: req.params.id }, req.body)
-  //     .then(dbComputerData => res.json(dbComputerData))
-  //     .catch(err => {
-  //       console.log(err);
-  //       res.status(422).json(err)
-  //     });
-  // },
-  // // to delete a book from the reading list ("/api/book/:id" => DELETE)
-  // remove: function (req, res) {
-  //   db.Computer
-  //     .findById(req.params.id)
-  //     .then(dbComputerData => dbComputerData.remove())
-  //     .then(dbComputerData => res.json(dbComputerData))
-  //     .catch(err => {
-  //       console.log(err);
-  //       res.status(422).json(err)
-  //     });
-  // },
-
-  // // find a book by id ("/api/book/:id")
-  // findById: function (req, res) {
-  //   db.Computer
-  //     .findById(req.params.id)
-  //     .then(dbComputerData => res.json(dbComputerData))
-  //     .catch(err => {
-  //       console.log(err);
-  //       res.status(422).json(err)
-  //     });
-  // },
-
-
 }

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-//import {Link} from 'react-router-dom';
+import {Redirect} from 'react-router-dom';
 import API from '../utils/API';
 
 class Search extends Component {
@@ -16,7 +16,8 @@ class Search extends Component {
     rams: [],
     hdds: [],
     gpus: [],
-    cases: []
+    cases: [],
+    addedToCart: false
   }
   componentDidMount() {
     this.startOver();
@@ -33,7 +34,7 @@ class Search extends Component {
   }
   getCpusByTags = (tagId) => {
     API.getCpusByTags(tagId)
-      .then(({data}) => {this.setState({cpus: data});console.log(data)})
+      .then(({data}) => {this.setState({cpus: data});})
       .catch(err => console.log(err));
   }
   getRamsByTags = (tagId) => {
@@ -57,72 +58,63 @@ class Search extends Component {
       .catch(err => console.log(err));
   }
 
-  // method to handle on change
-//   handleChange = event => {
-//     const {name, value} = event.target;
-
-//     this.setState({[name]: value});
-//   }
-
-//   // handle form submit
-//   handleSubmit = event => {
-//     event.preventDefault();
-
-//     if (!this.state.searchTerm) {
-//       return false;
-//     }
-
-//     API
-//       .searchGoogleBooks(this.state.searchTerm)
-//       .then(({data: {
-//           items
-//         }}) => {
-//         // filter items array to only include data we care about
-//         const books = items.map(book => {
-//           return {
-//             title: book.volumeInfo.title,
-//             authors: book.volumeInfo.authors,
-//             description: book.volumeInfo.description,
-//             id: book.id,
-//             image: book.volumeInfo.imageLinks.thumbnail,
-//             link: book.volumeInfo.infoLink
-//           }
-//         });
-
-//         this.setState({books});
-
-//       })
-//       .catch(err => console.log(err));
-//   }
-
-//   // save book
-//   saveBook = bookId => {
-//     // find book in this.state.books by it's id
-//     const selectedBook = this
-//       .state
-//       .books
-//       .find(({id}) => id === bookId);
-
-//     API
-//       .saveBook(selectedBook)
-//       .then(({data}) => console.log(data))
-//       .catch(err => console.log(err));
-//   }
-step1Submit = cpu => {
-  this.state.buildParts.push(cpu);
-  this.setState({cpus: []});
-  this.setState({currentStep: "2"});
-  this.setState({totalPrice: parseFloat(this.state.totalPrice) + parseFloat(cpu.price)});
-}
-step2Submit = ram => {this.state.buildParts.push(ram);this.setState({rams: []});this.setState({currentStep: "3"});this.setState({totalPrice: parseFloat(this.state.totalPrice) + parseFloat(ram.price)});}
-step3Submit = hdd => {this.state.buildParts.push(hdd);this.setState({hdds: []});this.setState({currentStep: "4"});this.setState({totalPrice: parseFloat(this.state.totalPrice) + parseFloat(hdd.price)});}
-step4Submit = gpu => {this.state.buildParts.push(gpu);this.setState({gpus: []});this.setState({currentStep: "5"});this.setState({totalPrice: parseFloat(this.state.totalPrice ) + parseFloat(gpu.price)});}
-step5Submit = dcase => {this.state.buildParts.push(dcase);this.setState({cases: []});this.setState({currentStep: "Completed!"});this.setState({totalPrice: parseFloat(this.state.totalPrice) + parseFloat(dcase.price)});}
-addToCart = () => {
-  
-}
+  step1Submit = cpu => {
+    this.state.buildParts.push(cpu);
+    this.setState({cpus: []});
+    this.setState({currentStep: "2"});
+    this.setState({totalPrice: parseFloat(this.state.totalPrice) + parseFloat(cpu.price)});
+  }
+  step2Submit = ram => {this.state.buildParts.push(ram);this.setState({rams: []});this.setState({currentStep: "3"});this.setState({totalPrice: parseFloat(this.state.totalPrice) + parseFloat(ram.price)});}
+  step3Submit = hdd => {this.state.buildParts.push(hdd);this.setState({hdds: []});this.setState({currentStep: "4"});this.setState({totalPrice: parseFloat(this.state.totalPrice) + parseFloat(hdd.price)});}
+  step4Submit = gpu => {this.state.buildParts.push(gpu);this.setState({gpus: []});this.setState({currentStep: "5"});this.setState({totalPrice: parseFloat(this.state.totalPrice ) + parseFloat(gpu.price)});}
+  step5Submit = dcase => {this.state.buildParts.push(dcase);this.setState({cases: []});this.setState({currentStep: "Completed!"});this.setState({totalPrice: parseFloat(this.state.totalPrice) + parseFloat(dcase.price)});}
+  addToCart = () => {
+    let ts = Math.round((new Date()).getTime() / 1000);
+    
+    
+      const selectedComputer = {
+        title: "Customized_"+this.state.totalPrice+"_"+ts,
+        price: this.state.totalPrice,
+        cpu: this.state.buildParts[0].idx,
+        cpu_desc: this.state.buildParts[0].title,
+        ram: this.state.buildParts[1].idx,
+        ram_desc: this.state.buildParts[1].title,
+        hdd: this.state.buildParts[2].idx,
+        hdd_desc: this.state.buildParts[2].title,
+        gpu: this.state.buildParts[3].idx,
+        gpu_desc: this.state.buildParts[3].title,
+        case: this.state.buildParts[4].idx,
+        case_desc: this.state.buildParts[4].title,
+        tag: "Customized",
+        link: "",
+        image: this.state.buildParts[4].image
+      };
+      const readyForOrder = {
+        userId: "0",
+        orderId: "",
+        custName: "",
+        custShipAddr: "",
+        custPhone: "",
+        custCard: "",
+        computer: [selectedComputer]
+      };
+      //console.log(readyForOrder);
+      API
+        .addToCart(readyForOrder)
+        .then(({data}) => {
+          console.log(data);
+          this.setState({
+            addedToCart: true
+          })
+        })
+        .catch(err => console.log(err));
+  }
 
   render() {
+    if (this.state.addedToCart) {
+      return <Redirect to="/order" />
+    }
+    const bodyWidth = {'width': '80%'};
     return (
       <div>
         <div className="jumbotron jumbotron-fluid text-center">
@@ -142,7 +134,7 @@ addToCart = () => {
           }
           
         </div>
-        <div className="container-fluid">
+        <div className="container-fluid" style={bodyWidth}>
           <div className="row part_scr build_scr">
             <div className="col-12 col-md-12">
               <div className="row align-items-stretch">

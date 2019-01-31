@@ -1,11 +1,14 @@
 import React, {Component} from 'react';
-//import {Link} from 'react-router-dom';
+import Modal from '../components/Modal';
+import {Redirect} from 'react-router-dom';
 import API from '../utils/API';
 import OrderForm from '../components/Order';
 
 class Order extends Component {
   state = {
     emptyFlag: "1",
+    show: false,
+    modal: [],
     order: [
       {
         userId: "0",
@@ -16,12 +19,11 @@ class Order extends Component {
         custCard: "",
         computer: []
       }
-    ]
+    ],
+    orderCompleted: false
   }
   componentDidMount() {
     this.getOrder();
-    console.log("call sendSMS");
-    this.sendSMS();
   }
   getOrder = () => {
     API.getOrder()
@@ -36,12 +38,6 @@ class Order extends Component {
       })
       .catch(err => console.log(err))
   }
-  sendSMS = () => {
-    console.log("call sendSMS API");
-    API.sendSMS('test')
-        .then(({data}) => console.log(data))
-        .catch(err => console.log(err));
-  }
 
   // method to handle on change
   handleChange = event => {
@@ -49,34 +45,65 @@ class Order extends Component {
     let copy = JSON.parse(JSON.stringify(this.state.order));
     copy[0][[name]] = value;
     this.setState({order : copy});
-    // console.log(this.state.order);
   }
 
   // handle form submit
   handleSubmit = event => {
     event.preventDefault();
-    console.log(this.state.order);
-    // if (!this.state.cust_name || !this.state.cust_ship_addr || !this.state.cust_phone) {
-    //   return false;
-    // }
-    // //const selectedComputer = this.state.order.find(({_id}) => _id === computerId);
-    // API
-    //   .updateOrder(this.state.order)
-    //   .then(({data}) => {
-    //     //this.setState({books});
-    //   })
-    //   .catch(err => console.log(err));
-  }
+   
+    if (!this.state.order[0].custName || !this.state.order[0].custShipAddr || !this.state.order[0].custPhone || !this.state.order[0].custCard) {
+      return false;
+    }
+    
+    API
+      .placeOrder(this.state.order)
+      .then(({data}) => {
+        // console.log(data);
+        const completeOrderModal = [{
+          title: `Order Confirmation`,
+          image: `${data.computer[0].image}`,
+          price: `${data.computer[0].price}`,
+          description: `
+          Thank you for shopping with us.
 
+          ===========================================
+          Order ID: ${data._id}
+          ===========================================
+
+          We've sent you a text for more information.
+          
+          We hope to see you again soon.
+
+          COMP-U-BUILT
+          `
+        }];
+        this.setState({modal: completeOrderModal});
+        this.showModal();
+      })
+      .catch(err => console.log(err));
+  }
+  
+  showModal = () => {
+    this.setState({ show: true });
+  };
+
+  hideModal = () => {
+    this.setState({ show: false });
+    this.setState({ orderCompleted: true });
+  };
   render() {
+    if (this.state.orderCompleted) {
+      return <Redirect to="/" />
+    }
     const cursorStyle = {cursor : 'pointer'};
     const cpuLogo = {width : '50px', position: 'relative', top: '-12px'};
+    const bodyWidth = {'width': '80%'};
     return (
       <div>
         <div className="jumbotron jumbotron-fluid text-center">
           <h1 className="display-4">Order your computer</h1>
         </div>
-        <div className="container-fluid">
+        <div className="container-fluid" style={bodyWidth}>
           <div className="row">
             <div className="col-12 col-md-6">
               <OrderForm
@@ -131,9 +158,9 @@ class Order extends Component {
                         </div>
                         <div className="float-none"></div>
                         <div className="btn-group d-flex flex-column mt-3 " role="group">
-                          <p style={cursorStyle} onClick={() => this.moreInfo("cpu", this.state.order[0].computer[0].cpu)}><i className="fas fa-microchip"></i> {this.state.order[0].computer[0].cpu_desc}</p>
-                          <p style={cursorStyle} onClick={() => this.moreInfo("ram", this.state.order[0].computer[0].ram)}><i className="fas fa-memory"></i> {this.state.order[0].computer[0].ram_desc}</p>
-                          <p style={cursorStyle} onClick={() => this.moreInfo("hdd", this.state.order[0].computer[0].hdd)}><i className="fas fa-hdd"></i> {this.state.order[0].computer[0].hdd_desc}</p>
+                          <p style={cursorStyle}><i className="fas fa-microchip"></i> {this.state.order[0].computer[0].cpu_desc}</p>
+                          <p style={cursorStyle}><i className="fas fa-memory"></i> {this.state.order[0].computer[0].ram_desc}</p>
+                          <p style={cursorStyle}><i className="fas fa-hdd"></i> {this.state.order[0].computer[0].hdd_desc}</p>
                         </div>
                       </div>
                     </div>
@@ -142,6 +169,11 @@ class Order extends Component {
             </div>
           </div>
         </div>
+        <Modal 
+          show = {this.state.show}
+          handleClose = {this.hideModal}
+          value = {this.state.modal}
+          />
       </div>
     )
   }

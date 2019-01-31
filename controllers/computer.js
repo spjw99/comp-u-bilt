@@ -19,7 +19,7 @@ module.exports = {
   findByPrice: function(req, res) {
     db.Computer
       .find({ price: {$lte : req.params.price}})
-      .sort({date: -1})
+      .sort({price: -1})
       .then(dbComputerData => res.json(dbComputerData))
       .catch(err => {
         console.log(err);

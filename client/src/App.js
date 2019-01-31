@@ -1,6 +1,4 @@
 import React from 'react';
-
-
 import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
 
 // import components and pages to use
@@ -9,6 +7,7 @@ import Search from './pages/Search';
 import Saved from './pages/Saved';
 import Build from './pages/Build';
 import Order from './pages/Order';
+import './index.css';
 
 const App = () => {
   return (
