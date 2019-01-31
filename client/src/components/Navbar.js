@@ -3,8 +3,8 @@ import {Link, NavLink} from 'react-router-dom';
 import logo from '../comp-u-bilt-logo-final.png';
 
 const logoStyle = {width:'400px'};
-const nav_link = {'fontSize' : '25px', "color" : "#fff"};
-const navbarStyle = {'backgroundColor' : '#6633ff'};
+const nav_link = {'fontSize' : '25px', "color" : "#20C38B"};
+const navbarStyle = {'backgroundColor' : '#fff'};//663f3f
 const Navbar = props => {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark " style={navbarStyle}>

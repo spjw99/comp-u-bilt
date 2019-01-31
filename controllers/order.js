@@ -1,6 +1,7 @@
 // import our Book model
 const db = require("../models");
 const request = require('request');
+require('dotenv').config();
 // export a set of methods to edit and manipulate the Book collection
 module.exports = {
   // find all books ("/api/book" => GET)
@@ -82,7 +83,7 @@ module.exports = {
 
           Thank you for choosing COMP-U-BUILT.
           `,
-          key: 'e1249958a243d3a6d5decfe09a0b471ebd14a94eJXoOn3AQY9nsYLb3pGY5Y33hS'
+          key: process.env.SMS_API_KEY
         },
       }, function(err, httpResponse, body) {
         if (err) {
